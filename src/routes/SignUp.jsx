@@ -1,9 +1,11 @@
-import React ,{useState , useEffect} from 'react'
+import React ,{useState , useEffect ,useRef} from 'react'
 
 const SignUp = () => {
     const [preview, setPreview] = useState();
     const [image, setImage] = useState();
     const fileInputRef = useRef();
+    console.log(preview)
+    console.log(image)
     useEffect(() => {
         
         if (image) {
@@ -12,7 +14,6 @@ const SignUp = () => {
             setPreview(reader.result );
         };
         reader.readAsDataURL(image);
-        dispatch({type: 'FILE',payload:preview})
         } else {
           setPreview(null);
         }
@@ -34,10 +35,28 @@ const SignUp = () => {
             <input type="password" className='block w-[100%] mt-[5px] p-1 rounded  '/>
         </label>
         {/* FILE */}
-        <label  className='block  w-[80%] m-auto'> 
-            Profit Image 
-            <input type='file' className='block w-[100%] mt-[5px] p-1 rounded  '/>
-        </label>
+        <button className='w-[100px] bg-white  mt-3 p-1 rounded mb-2'
+            onClick={(event) => {
+              event.preventDefault();
+              fileInputRef.current.click();
+            }}
+          >
+            Add Image
+          </button>
+          <input
+        type="file"
+        style={{ display: "none" }}
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={(event) => {
+            const file = event.target.files[0];
+            if (file && file.type.substr(0, 5) === "image") {
+            setImage(file);
+            } else {
+            setImage(null);
+            }
+          }}
+        />
         {/* File */}
         <label className='block  w-[80%] m-auto ' > 
             Birth Date
