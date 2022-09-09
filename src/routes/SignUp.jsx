@@ -1,6 +1,12 @@
 import React ,{useState , useEffect ,useRef} from 'react'
-
+import { db } from '../fireConfig';
+import { collection , getDocs , addDoc , doc} from 'firebase/firestore'
 const SignUp = () => {
+    // fireStore 
+    
+    // data 
+    const [data , setData] = useState({name:'' , email:'' , password:'' ,image:''}) ; 
+    // image
     const [preview, setPreview] = useState();
     const [image, setImage] = useState();
     const fileInputRef = useRef();
