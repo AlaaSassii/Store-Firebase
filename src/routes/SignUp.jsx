@@ -5,6 +5,8 @@ const SignUp = () => {
     // fireStore 
     const [users , setUsers] = useState([]) 
     const usersCollectionRef = collection(db, "users");
+    const [data , setData] = useState({name:'' , email:'' , password:'' ,image:''}) ; 
+    console.log(data)
     // data 
     useEffect(()=>{
         const getData = async ()=> {
@@ -13,15 +15,32 @@ const SignUp = () => {
         }
         getData() ; 
     },[]) ; 
-    const addPerson = async () => { 
-        console.log('asdasdasdasjdahsdkjashdkasjhd')
 
+        // image
+        const [preview, setPreview] = useState();
+        const [image, setImage] = useState();
+        const fileInputRef = useRef();
+        useEffect(() => {
+            
+            if (image) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setPreview(reader.result );
+            };
+            reader.readAsDataURL(image);
+            } else {
+              setPreview(null);
+            }
+          }, [image,preview]);
+
+    const addPerson = async () => { 
+        console.log('addPerson Func is runing')
         const {name , email , password , image} = data  ;
         if(name && email && password && image) {
             const foundPerson = users.find(user =>  user.email === email ) 
+            console.log('foundPerson',foundPerson)
             if (foundPerson === undefined) {
-                console.log('asdasdasdasjdahsdkjashdkasjhd')
-                await addDoc(usersCollectionRef , {...data}) ; 
+                await addDoc(usersCollectionRef ,{...data}) ; 
                 setData({name:'' , email:'' , password:'' ,image:''})
             }
             else {
@@ -29,25 +48,7 @@ const SignUp = () => {
             }
         }
     }
-    const [data , setData] = useState({name:'' , email:'' , password:'' ,image:''}) ; 
-    // image
-    const [preview, setPreview] = useState();
-    const [image, setImage] = useState();
-    const fileInputRef = useRef();
-    console.log(preview)
-    console.log(image)
-    useEffect(() => {
-        
-        if (image) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setPreview(reader.result );
-        };
-        reader.readAsDataURL(image);
-        } else {
-          setPreview(null);
-        }
-      }, [image,preview]);
+
       
   return (
     <div className='absolute top-[30%] left-[50%] md:w-[29%] w-[80%] translate-x-[-50%] bg-slate-200 p-5 rounded'>
@@ -55,15 +56,15 @@ const SignUp = () => {
         <p className='mt-3  text-center'>Or <a className='text-blue-400 '>Login</a></p>
         <label className='block w-[80%] m-auto '> 
             Full name 
-            <input type="text" className='block w-[100%] mt-[5px] p-1 rounded ' onChange={e =>setData({...data , name:e.target.value})} />
+            <input value={data.name} type="text" className='block w-[100%] mt-[5px] p-1 rounded ' onChange={e =>setData({...data , name:e.target.value})} />
         </label>
         <label className='block  w-[80%] m-auto' > 
             Email address
-            <input type='email' className='block w-[100%] mt-[5px] p-1 rounded ' onChange={e =>setData({...data , email:e.target.value})}/>
+            <input type='email' value={data.email} className='block w-[100%] mt-[5px] p-1 rounded ' onChange={e =>setData({...data , email:e.target.value})}/>
         </label>
-        <label className='block  w-[80%] m-auto' > 
+        <label className='block  w-[80%] m-auto'  > 
             Password
-            <input type="password" className='block w-[100%] mt-[5px] p-1 rounded  'onChange={e =>setData({...data , password:e.target.value})}/>
+            <input value={data.password} type="password" className='block w-[100%] mt-[5px] p-1 rounded  'onChange={e =>setData({...data , password:e.target.value})}/>
         </label>
         {/* FILE */}
         <button className='w-[100px] bg-white  mt-3 p-1 rounded mb-2'
@@ -75,6 +76,7 @@ const SignUp = () => {
             Add Image
           </button>
           <input
+         
         type="file"
         style={{ display: "none" }}
         ref={fileInputRef}
@@ -83,9 +85,10 @@ const SignUp = () => {
             const file = event.target.files[0];
             if (file && file.type.substr(0, 5) === "image") {
             setImage(file);
-            setData({...data , image:file}) ;
+            setData({...data , image:preview}) ;
             } else {
-            setData({...data , image:null});
+              console.log('image is null')
+            setData({...data , image:preview});
                 
             }
           }}
